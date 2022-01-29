@@ -15,10 +15,10 @@ router.get('/', function (req, res, next) {
   });
 });
 
-router.get('/orders', function (req, res, next) {
+router.get('/positions', function (req, res, next) {
   //returns array of positions
   alpaca.getPositions().then((positions) => {
-    res.send('orders: ' + JSON.stringify(positions));
+    res.send('positions: ' + JSON.stringify(positions));
   });
 });
 
