@@ -1,4 +1,5 @@
 var config = require('../config.json');
+const moment = require("moment");
 var express = require('express');
 var router = express.Router();
 const Alpaca = require('@alpacahq/alpaca-trade-api')
@@ -11,8 +12,28 @@ const alpaca = new Alpaca({
 router.get('/', function (req, res, next) {
     //expected query: {symbol: 'msft'}
     alpaca.getAsset(req.query.symbol.toUpperCase()).then((asset) => {
-        res.send('asset:' + JSON.stringify(asset));
-    }).catch(error => res.send('error'));
+        res.send(JSON.stringify(asset));
+    }).catch(error => res.sendStatus(500));
+});
+
+router.get('/price', async function (req, res, next) {
+    //expected query: {symbol: 'msft'}
+    let symbol = req.query.symbol.toUpperCase();
+    //todo btw if this returns fail the BREAKS. .then evaluation implement?
+    let bars = alpaca.getBarsV2(symbol, {
+            start: moment().subtract(7, "days").format(),
+            end: moment().subtract(20, "minutes").format(),
+            timeframe: "1Day",
+        },
+        alpaca.configuration);
+    const barset = [];
+
+    for await (let b of bars) {
+        barset.push(b);
+    }
+    const week_close = barset.slice(-1)[0].ClosePrice;
+    console.log("price: " + week_close);
+    res.send(week_close + "");
 });
 
 router.get('/all', function (req, res, next) {

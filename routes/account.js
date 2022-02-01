@@ -11,14 +11,14 @@ const alpaca = new Alpaca({
 /* GET user listing. */
 router.get('/', function (req, res, next) {
   alpaca.getAccount().then((account) => {
-    res.send('account: ' + JSON.stringify(account));
+    res.send(JSON.stringify(account));
   });
 });
 
 router.get('/positions', function (req, res, next) {
   //returns array of positions
   alpaca.getPositions().then((positions) => {
-    res.send('positions: ' + JSON.stringify(positions));
+    res.send(JSON.stringify(positions));
   });
 });
 
